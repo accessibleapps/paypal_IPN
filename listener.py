@@ -23,7 +23,7 @@ class PayPalIPNListener(object):
 
     def verify_request(self, url):
         new_url = OrderedDict()
-        for k, v in url.iteritems():
+        for k, v in reversed(url.iteritems()):
             new_url[k] = unicode(v).encode('UTF-8')
         url = urllib.urlencode(new_url)
         new_url = "cmd=_notify-validate&%s" % url
