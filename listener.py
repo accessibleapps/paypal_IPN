@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger().getChild('paypal_IPN.listener')
+
 from collections import OrderedDict
 import urllib
 
@@ -14,8 +17,11 @@ class PayPalIPNListener(object):
 
     def __init__(self, sandbox=False):
         super(PayPalIPNListener, self).__init__()
+        self.sandbox = sandbox
         if sandbox:
-            self.PAYPAL_URL = self.SANDBOX_URL
+            self.url = self.SANDBOX_URL
+        else:
+            self.url = self.PAYPAL_URL
 
     def process_request(self, url):
         self.verify_request(url)
@@ -25,11 +31,12 @@ class PayPalIPNListener(object):
         url = OrderedDict([(k, v.encode('UTF-8')) for k, v in url.items()])
         url = urllib.urlencode(url)
         new_url = "cmd=_notify-validate&%s" % url
-        full_url = '%s?%s' % (self.PAYPAL_URL, new_url)
+        full_url = '%s?%s' % (self.url, new_url)
+        logger.debug("Full PayPAL confirmation URL: %r" % full_url)
         confirmation_request = urllib.urlopen(full_url)
         data = confirmation_request.read()
         if data != "VERIFIED":
-            raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r" % data)
+            raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, full_url))
         return True
 
 
