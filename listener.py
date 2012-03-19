@@ -4,6 +4,7 @@ logger = getLogger().getChild('paypal_IPN.listener')
 from collections import OrderedDict
 import urllib
 
+
 class PayPalAPIError(RuntimeError):
     pass
 
@@ -28,9 +29,10 @@ class PayPalIPNListener(object):
         return self.decode_request(url)
 
     def verify_request(self, url):
-        url = OrderedDict([(k, v.encode('UTF-8')) for k, v in url.items()])
-        url = urllib.urlencode(url)
-        new_url = "cmd=_notify-validate&%s" % url
+        arg = ""
+        for k, v in url.iteritems():
+            arg += "&{k}={v}".format(k=k, v=v.encode('UTF-8'))
+        new_url = "cmd=_notify-validate&%s" % arg
         full_url = '%s?%s' % (self.url, new_url)
         logger.debug("Full PayPAL confirmation URL: %r" % full_url)
         confirmation_request = urllib.urlopen(full_url)
