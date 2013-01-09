@@ -34,7 +34,7 @@ class PayPalIPNListener(object):
             if isinstance(v, unicode):
                 v = v.encode('UTF-8')
             arg += "&{k}={v}".format(**locals())
-        new_url = "cmd=_notify-validate&%s" % arg
+        new_url = "cmd=_notify-validate%s" % arg
         full_url = '%s?%s' % (self.url, new_url)
         logger.debug("Full PayPAL confirmation URL: %r" % full_url)
         confirmation_request = urllib.urlopen(full_url)
