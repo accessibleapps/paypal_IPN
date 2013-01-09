@@ -36,7 +36,7 @@ class PayPalIPNListener(object):
             if isinstance(v, unicode):
                 v = v.encode('UTF-8')
             data[k] = v
-        confirmation_request = requests.post(self.url, data))
+        confirmation_request = requests.post(self.url, data)
         data = confirmation_request.content
         if data != "VERIFIED":
             raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, full_url))
