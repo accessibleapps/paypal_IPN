@@ -14,7 +14,7 @@ class VerificationError(PayPalAPIError):
 
 class PayPalIPNListener(object):
     PAYPAL_URL = 'https://www.paypal.com/cgi-bin/webscr'
-    SANDBOX_URL = 'https://sandbox.paypal.com/cgi-bin/webscr'
+    SANDBOX_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
 
     def __init__(self, sandbox=False):
         super(PayPalIPNListener, self).__init__()
