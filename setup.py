@@ -6,4 +6,5 @@ setup(
  description = "Simple PayPal IPN Listener",
  package_dir = {'paypal_IPN': '.'},
  packages = ['paypal_IPN'],
+ install_requires = ['requests'],
 )

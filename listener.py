@@ -2,7 +2,7 @@ from logging import getLogger
 logger = getLogger().getChild('paypal_IPN.listener')
 
 from collections import OrderedDict
-import urllib
+import requests
 
 
 class PayPalAPIError(RuntimeError):
@@ -30,15 +30,14 @@ class PayPalIPNListener(object):
 
     def verify_request(self, url):
         arg = ""
+        data = collections.OrderedDict()
+        data['cmd'] = '_notify-validate'
         for k, v in url.iteritems():
             if isinstance(v, unicode):
                 v = v.encode('UTF-8')
-            arg += "&{k}={v}".format(**locals())
-        new_url = "cmd=_notify-validate%s" % arg
-        full_url = '%s?%s' % (self.url, new_url)
-        logger.debug("Full PayPAL confirmation URL: %r" % full_url)
-        confirmation_request = urllib.urlopen(full_url)
-        data = confirmation_request.read()
+            data[k] = v
+        confirmation_request = requests.post(self.url, data))
+        data = confirmation_request.content
         if data != "VERIFIED":
             raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, full_url))
         return True
