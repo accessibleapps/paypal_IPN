@@ -30,7 +30,7 @@ class PayPalIPNListener(object):
 
     def verify_request(self, url):
         arg = ""
-        data = collections.OrderedDict()
+        data = OrderedDict()
         data['cmd'] = '_notify-validate'
         for k, v in url.iteritems():
             if isinstance(v, unicode):
