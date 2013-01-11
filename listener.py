@@ -29,7 +29,6 @@ class PayPalIPNListener(object):
         return self.decode_request(url)
 
     def verify_request(self, url):
-        arg = ""
         data = OrderedDict()
         data['cmd'] = '_notify-validate'
         for k, v in url.iteritems():
@@ -39,9 +38,8 @@ class PayPalIPNListener(object):
         confirmation_request = requests.post(self.url, data)
         data = confirmation_request.content
         if data != "VERIFIED":
-            raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, full_url))
+            raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, self.url))
         return True
-
 
     def decode_request(self, data):
         new = OrderedDict(data)
