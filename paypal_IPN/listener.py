@@ -4,6 +4,11 @@ logger = getLogger().getChild('paypal_IPN.listener')
 from collections import OrderedDict
 import requests
 
+try:
+    text_type = unicode
+except NameError:
+    text_type = str
+
 
 class PayPalAPIError(RuntimeError):
     pass
@@ -31,19 +36,19 @@ class PayPalIPNListener(object):
     def verify_request(self, url):
         data = OrderedDict()
         data['cmd'] = '_notify-validate'
-        for k, v in url.iteritems():
-            if isinstance(v, unicode):
+        for k, v in url.items():
+            if isinstance(v, text_type):
                 v = v.encode('UTF-8')
             data[k] = v
         confirmation_request = requests.post(self.url, data)
         data = confirmation_request.content
-        if data != "VERIFIED":
+        if data != b"VERIFIED":
             raise VerificationError("Unable to verify PayPal IPN message. PayPal returned %r from verification URL %r" % (data, self.url))
         return True
 
     def decode_request(self, data):
         new = OrderedDict(data)
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if isinstance( value, list ) and len( value ) == 1:
                 new[key] = value[0]
         return new
